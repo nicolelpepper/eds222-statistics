@@ -1,0 +1,32 @@
+---
+title: "eds 222 - week 2 discussion"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+
+# Set seed for random numbers so that every time you run the code you get the same result
+set.seed(1234) # could choose whatever numbers
+
+# Create a tibble (data frame) 
+lln_norm <- tibble(
+  n_sz = sample(5:500, 1e4, replace = TRUE),
+          # name of variable, for a sample of 5-500, 10000 random samples from that interval
+  sample_mean = sapply(n_sz, function(n) mean(rnorm(n)))
+          # sample mean, sapply runs a for loop that calculates the mean from the sample according to normal distribution 
+)
+
+
+ggplot(data=n_11n_norm) +
+  geom_point(aes(x =n_sz, y = sample_mean), alpha = 0.25, shape = 20) + 
+  geom_hline(yintercept = 0,
+             color = 'cyan4') + 
+  labs(x = "sample size",
+       y = "sample mean") +
+  theme_bw()
+
+```
