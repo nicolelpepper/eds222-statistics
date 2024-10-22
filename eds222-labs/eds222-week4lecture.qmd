@@ -1,0 +1,60 @@
+---
+title: "Week4-lecture"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r}
+library(tidyverse)
+library(readr)
+library(gt)
+library(openintro)
+library(ggplot2)
+library(modelr)
+library(knitr)
+library(xtable)
+library(lterdatasampler)
+library(palmerpenguins)
+```
+
+
+
+```{r}
+penguins
+```
+
+```{r}
+# Use palmer penguins to fit a model that has an interaction between a continuous and categorical variable
+
+flipper_body_sex <- lm(flipper_length_mm ~ body_mass_g + sex + body_mass_g : sex, penguins) 
+
+summary(flipper_body_sex)
+
+ggplot(penguins, aes(flipper_length_mm, body_mass_g, color = sex)) + 
+  geom_point() +
+  geom_abline(intercept = -5334, slope = 47.157, color = "red") + 
+  geom_abline(intercept = -5443 + 406.8015,
+              slope = 47.1527 +  -0.2942,
+              color = "blue")
+
+
+```
+
+
+```{r}
+# Use palmer penguins to fit a model that has an interaction between two continuous variables
+
+lm(flipper_length_mm ~ body_mass_g + bill_length_mm + body_mass_g : bill_length_mm, penguins) %>% summary()
+
+
+```
+
+
+
+```{r}
+# Interpret the coefficients
+```
+
