@@ -1,3 +1,9 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
 # Section 0: Getting set up
 
 Load the following packages:
@@ -58,16 +64,40 @@ Complete the following:
 1.  Using the model specified above, use `lm()` to estimate all three coefficients using the `mpg` data. Make sure you are treating `year` as a categorical variable! Use `summary(lm())` to print the regression results.
 
 ```{r}
+# hwy = mpg, vintage = year
+mpg$year <- factor(mpg$year)
 
+
+summary(lm(hwy ~ displ + year + displ:year, data = mpg))
+
+mod2 <- (lm(hwy ~ displ + year + displ:year, data = mpg))
 ```
 
 2.  What does the intercept tell you, in words?
 
+    B0 –\> Intercept for 0 is positive
+
+    Car with infinitsmly small car when x2 = 0 (1999)
+
+    x =1 is 2008
+
 3.  What does the coefficient on `displ` tell you, in words?
+
+    This is B1: slope at 0
+
+    This value indicates a negative slope in 1999
+
+    When you compare with b hat 3 you see it gets less steep (positive b hat 3)
 
 4.  What does the coefficient estimate on the 2008 vintage indicator variable (`year2008`) tell you, in words?
 
+    Bhat 2 = intercept at 2008
+
+    Infinitesmly small car when x2 = 1 (2008)
+
 5.  What does the coefficient on `displ:year2008` tell you, in words?[^1]
+
+    Similar slope but slightly less steep
 
 [^1]: Hint: This is tricky. Start by writing down the relationship between miles per gallon and engine size when the car vintage is 2008. Then write the same thing for car vintage 1999. Can you see what role this coefficient plays?
 
@@ -80,6 +110,13 @@ Interaction models are difficult to interpret. Writing out the algebra of what e
 We will use `ggplot2` with `augment()` to obtain predictions, in combination with `geom_line()`.
 
 ```{r}
+mpg %>% 
+  ggplot(aes(x = displ, y = hwy, color = year)) +
+  geom_point() +
+  geom_line(data = augment(mod2), aes(y = .fitted, color = year)) + 
+  labs(x = "Engine Displacement, in litres",
+       y = "Highway Miles per gallon") +
+  scale_colour_discrete("Year")
 
 ```
 
@@ -94,7 +131,37 @@ These two measures are: $$R^{2}=1 - \frac{\sum_i e_i^2}{\sum_i (y_i - \bar y)^2}
 In this case, the interaction model added a new variable to our regression, so we should be comparing adjusted $R^2$ results from a model without the interaction to a model with it. You can see the adjusted $R^2$ in `summary(lm())`, but you can also access it by saving your `lm` object and calling `summary(mod)$adj.r.squared`.
 
 ```{r}
+mpg %>% 
+  ggplot(aes(x = displ, y = hwy, color = year)) +
+  geom_point() +
+ # geom_line(data = augment(mod2), aes(y = .fitted, color = year)) + 
+  geom_abline(slope = coef(mod2)['displ'],
+              intercept = coef(mod2)['(Intercept)'],
+                color = 'coral') +
+    geom_abline(slope = coef(mod2)['displ'] +
+                  coef(mod2)['displ:year2008'],
+              intercept = coef(mod2)['(Intercept)'] + 
+                coef(mod2)['year2008'],
+                color = 'blue') +
+  labs(x = "Engine Displacement, in litres",
+       y = "Highway Miles per gallon") +
+  scale_colour_discrete("Year")
+```
+
+Bhat 0 (INTERCEPT) = intercept at 0
+
+Bhat 1 (DISPL) = slope for 0
+
+Bhat 2 (YEAR2008)= intercept at
+
+Bhat 3(DIPL:YEAR2008) = whether slope is more extreme than other
+
+# 
+
+```{r}
 # no interaction
+
+
 
 # with the interaction
 
